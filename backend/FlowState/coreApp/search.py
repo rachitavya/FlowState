@@ -7,6 +7,12 @@ from nltk.tokenize import word_tokenize
 from nltk.sentiment import SentimentIntensityAnalyzer
 from operator import itemgetter
 from .models import Video, Task
+from FlowState.settings import*
+
+apiKey1=old_YOUTUBE_DATA_API_KEY
+apiKey2=rachitavya_YOUTUBE_DATA_API_KEY
+apiKey3=kietRachitavya_YOUTUBE_DATA_API_KEY
+
 
 def sentiment(text):
     sia = SentimentIntensityAnalyzer()
@@ -28,7 +34,8 @@ def search_task_data(string, taskId):
     search_params = {
         'part' : 'snippet',
         'q' : string,
-        'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+        # 'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+        'key':apiKey1,
         'maxResults' : 15,
         'type' : 'video'
     }
@@ -40,7 +47,7 @@ def search_task_data(string, taskId):
         video_ids.append(result['id']['videoId'])
 
     video_params = {
-        'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+        'key' : apiKey2,
         'part' : 'snippet,contentDetails,statistics',
         'id' : ','.join(video_ids),
         'maxResults' : 15
@@ -53,7 +60,7 @@ def search_task_data(string, taskId):
     for video_id in video_ids:
         comments = []
         comment_params = {
-            'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+            'key' : apiKey3,
             'part' : 'snippet',
             'videoId' : video_id,
             'order': 'relevance'
@@ -64,15 +71,18 @@ def search_task_data(string, taskId):
         print(r2.json())
         try:
             results2 = r2.json()['items']
+            for result2 in results2:
+                comment_data = {
+                    "comment": result2['snippet']['topLevelComment']['snippet']['textOriginal']
+                }
+                comments.append(comment_data)
         except:
-            continue
+            comments='Negative'
         
-        for result2 in results2:
-            comment_data = {
-                "comment": result2['snippet']['topLevelComment']['snippet']['textOriginal']
-            }
-            comments.append(comment_data)
         final_comments.append(comments)
+        
+        
+
             
     for result in results:
         video_data = {

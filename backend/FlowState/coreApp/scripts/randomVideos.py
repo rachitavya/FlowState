@@ -19,8 +19,10 @@ def search_data(string,counter):
 
     random_videos=[]
     for i in results:
-        random_videos.append({'title':i['snippet']['title'],'url':f'https://www.youtube.com/watch?v={ i["id"]["videoId"] }','thumbnail':i['snippet']['thumbnails']['default']['url']})
+        random_videos.append({'title':i['snippet']['title'],'url':f'https://www.youtube.com/watch?v={ i["id"]["videoId"] }','thumbnail':i['snippet']['thumbnails']['default']['url'],'id':i["id"]["videoId"]})
 
+    
+    print("hello",i["id"]["videoId"])
     return random_videos
 
 
