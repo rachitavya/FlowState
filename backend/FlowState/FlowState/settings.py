@@ -133,7 +133,12 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-YOUTUBE_DATA_API_KEY = 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses'
+old_YOUTUBE_DATA_API_KEY = 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses'
+kietRachitavya_YOUTUBE_DATA_API_KEY='AIzaSyALPfFpjRzpr5Lp72lniBFF-EfE3EbX0Vk'
+rachitavya_YOUTUBE_DATA_API_KEY = 'AIzaSyDsPetqdmWtnfzxkkjoeNKnCE1asr3pTM0'
+
+apiKey=kietRachitavya_YOUTUBE_DATA_API_KEY
+
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"

@@ -182,3 +182,6 @@ def community(request):
         return redirect("/core/community/")  # recorded
     return render(request, "community.html",context)
 
+@login_required(login_url="/login")
+def embedded_video(request):
+    return render(request,"embed.html")

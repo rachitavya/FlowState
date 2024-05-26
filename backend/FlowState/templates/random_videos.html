@@ -3,8 +3,9 @@
     <div class="random_title">Other videos</div>
     <div class="random_videos_container">
     {%for i in randomVideos%}
-        <a href="{{i.url}}">
-            <div class="video_card">
+    
+        <a href="{%url 'yt'%}?param1={{i.id}}"> 
+            <div class="video_card"> 
                 <div class="video_img"><img src="{{i.thumbnail}}" alt="" width="239px" height="140px"></div>
                 <div class="video_title">{{i.title}}</div>
                 <hr>
@@ -17,3 +18,6 @@
         {%endfor%}
     </div>
 </div>
+
+
+<!-- {{i.url}} -->

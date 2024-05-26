@@ -12,6 +12,6 @@ def getTechNews():
   
   return news_articles
 
-print(getTechNews())
+getTechNews()
 
 

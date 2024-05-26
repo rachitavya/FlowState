@@ -5,8 +5,16 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from nltk.tokenize import word_tokenize
 from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
+nltk.download('vader_lexicon')
 from operator import itemgetter
 from .models import Video, Task
+from FlowState.settings import*
+
+apiKey1=old_YOUTUBE_DATA_API_KEY
+apiKey2=rachitavya_YOUTUBE_DATA_API_KEY
+apiKey3=kietRachitavya_YOUTUBE_DATA_API_KEY
+
 
 def sentiment(text):
     sia = SentimentIntensityAnalyzer()
@@ -28,7 +36,8 @@ def search_task_data(string, taskId):
     search_params = {
         'part' : 'snippet',
         'q' : string,
-        'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+        # 'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+        'key':apiKey2,
         'maxResults' : 15,
         'type' : 'video'
     }
@@ -40,7 +49,7 @@ def search_task_data(string, taskId):
         video_ids.append(result['id']['videoId'])
 
     video_params = {
-        'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+        'key' : apiKey2,
         'part' : 'snippet,contentDetails,statistics',
         'id' : ','.join(video_ids),
         'maxResults' : 15
@@ -53,28 +62,38 @@ def search_task_data(string, taskId):
     for video_id in video_ids:
         comments = []
         comment_params = {
-            'key' : 'AIzaSyA6PXcMFY4sXRae4-HVisjz31GUjSyQses',
+            'key' : apiKey3,
             'part' : 'snippet',
             'videoId' : video_id,
             'order': 'relevance'
         }   
     
         r2 = requests.get(comment_url, params=comment_params)
-        # print("****************")
-        print(r2.json())
+        print(">> API call log")
+        # print(r2.json())
         try:
+            print("flag0")
             results2 = r2.json()['items']
+            for result2 in results2:
+                comment_data = {
+                    "comment": result2['snippet']['topLevelComment']['snippet']['textOriginal']
+                }
+                comments.append(comment_data)
+            print("flag1")
         except:
-            continue
+            print("flag2")
+            comments='Negative'
         
-        for result2 in results2:
-            comment_data = {
-                "comment": result2['snippet']['topLevelComment']['snippet']['textOriginal']
-            }
-            comments.append(comment_data)
         final_comments.append(comments)
-            
+        
+        
+
+    print("flag3")
+    print(">>>",len(results))
+    print(">",final_comments)
     for result in results:
+        print("flag4")
+        # print(">>>",result)
         video_data = {
             'title' : result['snippet']['title'].encode('utf-8').decode('utf-8'),
             'id' : result['id'],
@@ -91,26 +110,36 @@ def search_task_data(string, taskId):
         }
 
         videos.append(video_data)
+    print("flag5")
     context = {
         'videos' : videos,
         'comments': final_comments
         }
     i=0
     score_arr=[]
-    for i in range(len(final_comments)):
-        score=0
-        for dict in final_comments[i]:
-            score+=sentiment(dict['comment'])
-        videos[i]['score'] = score
+    print("flag6")
+    try:
+        for i in range(len(final_comments)):
+            score=0
 
+            for dict in final_comments[i]:
+                if dict=="Negative":
+                    continue
+
+                score+=sentiment(dict['comment'])
+            videos[i]['score'] = score
+    except Exception as e:
+        print(">>>>",e)
+    print("flag7")
     newlist = sorted(videos, key=itemgetter('score'), reverse=True)
     print(newlist)
     i=1
+    print("flag8")
     for resource in newlist:
         if i == 4:
             break
         Video.objects.create(task = Task.objects.get(id=taskId),title = resource["title"] , thumbnail = resource["thumbnail"] ,duration = resource["duration"],url = resource["url"],score = resource["score"])
         i+=1
     
-    
+    print("flag9")
     return "Data searched"
